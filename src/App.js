@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
 function App() {
+  const [inputValue, setInputValue] = useState('');
+  const [fileData, setFileData] = useState('');
+
+  const handleSubmit = async () => {
+    const response = await fetch('http://localhost:8000/api/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: inputValue }),
+    });
+    if (response.ok) {
+      console.log('Данные успешно отправлены');
+    }
+  };
+
+  const handleFetchData = async () => {
+    const response = await fetch('http://localhost:8000/api/data');
+    const result = await response.json();
+    setFileData(result.data);
+    console.log('Данные успешно получены с сервера');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Frontend 2.0</h1>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <button onClick={handleSubmit}>Отправить</button>
+      <button onClick={handleFetchData}>Получить данные</button>
+      <div>Содержимое файла: {fileData}</div>
     </div>
   );
 }
